@@ -30,7 +30,6 @@ public class StatisticTable extends javax.swing.JFrame {
         initComponents();        
         setVisible(true);
         setTitle("TicTacToe AI Analyzer - (oleh : IF-3/10113701)");
-        prograssBar.setForeground(Color.RED);
         prograssBar.setBackground(Color.WHITE);
         
         this.game = game;

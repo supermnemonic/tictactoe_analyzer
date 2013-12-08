@@ -4,6 +4,7 @@
  */
 package tictactoe_ab_pruning;
 
+import java.awt.Color;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -98,11 +99,12 @@ public class Game {
         this._O_ALGO = _param_o_algo;
 
         resetGame();
-
+        
         gameThread = new Thread(new Runnable() {
 
             @Override
             public void run() {
+                statisticTable.prograssBar.setForeground(Color.RED);
                 statisticTable.prograssBar.setString("Processing...");
 
                 com1.setAlgo_type(_X_ALGO);
@@ -240,6 +242,7 @@ public class Game {
                 s += "Seri: " + _totalGameDraw + "\n";
                 statisticTable.playerInfo.setText(s);
 
+                statisticTable.prograssBar.setForeground(Color.BLUE);
                 statisticTable.prograssBar.setString("Done.");
             }
         });
