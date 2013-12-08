@@ -205,7 +205,7 @@ public class Game {
 
                         // save [runtime detail] and [average runtime of total moves].
                         statistic.runtimeInfo[i_com1][j_com2] = "     (X) ai-level:" + (i_com1 + 1) + "\n           VS" + "\n     (O) ai-level:" + (j_com2 + 1)
-                                + "\n\nbermain dengan waktu rata2 :\n" + _2decimalPlace + " mili-detik.";
+                                + "\n\nbermain "+GAME_ITERATION+" kali dalam waktu rata2 :\n" + _2decimalPlace + " mili-detik.";
                         statistic.records[i_com1][j_com2].runningTime = averageRunTime;
 
                         // show each player win-count statistic in WIN_TABLE.
