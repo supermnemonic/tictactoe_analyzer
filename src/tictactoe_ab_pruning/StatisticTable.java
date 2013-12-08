@@ -10,7 +10,9 @@
  */
 package tictactoe_ab_pruning;
 
+import java.awt.Color;
 import java.awt.Component;
+import java.awt.Font;
 import javax.swing.JTable;
 import javax.swing.UIManager;
 import javax.swing.table.TableCellRenderer;
@@ -28,6 +30,8 @@ public class StatisticTable extends javax.swing.JFrame {
         initComponents();        
         setVisible(true);
         setTitle("TicTacToe AI Analyzer - (oleh : IF-3/10113701)");
+        prograssBar.setForeground(Color.RED);
+        prograssBar.setBackground(Color.WHITE);
         
         this.game = game;
     }

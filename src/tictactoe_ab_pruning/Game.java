@@ -39,8 +39,8 @@ public class Game {
     public StatisticTable statisticTable;
 
     public Game() {
-        this.board = new Board();
-        this.statisticTable = new StatisticTable(this);
+        board = new Board();
+        statisticTable = new StatisticTable(this);
 
         com1 = new AIPlayerMinimax(board, 1);
         com2 = new AIPlayerMinimax(board, 1);
@@ -77,12 +77,16 @@ public class Game {
         statisticTable.winTable.addMouseListener(tableMouseListener);
         statisticTable.runTimeTable.addMouseListener(tableMouseListener);
 
+        // seting up progress bar.
         statisticTable.prograssBar.setMinimum(0);
         statisticTable.prograssBar.setMaximum(COM1_LEVEL_MAX * COM2_LEVEL_MAX);
         statisticTable.prograssBar.setStringPainted(true);
 
+        // seting up for the first time.
         resetGame();
     }
+    
+    // prepare new thread to run the game.
     Thread gameThread;
     public Seed _FIRSTPLAYER;
     public String _X_ALGO;
@@ -161,7 +165,7 @@ public class Game {
                                     if (hasWon(board.cells, com1.mySeed) != null) {
                                         winner = com1;                                        
                                     } else if (hasWon(board.cells, com2.mySeed) != null) {
-                                        winner = com2;;
+                                        winner = com2;
                                     }
                                     break;
                                 }
@@ -213,6 +217,7 @@ public class Game {
                         String s = "x:" + statistic.records[i_com1][j_com2].crossWinCount + " vs " + statistic.records[i_com1][j_com2].noughtWinCount + ":o";
                         statisticTable.winTable.setValueAt(s, i_com1, j_com2 + 1);
 
+                        // update progress bar value.
                         int v = statisticTable.prograssBar.getValue() + 1;
                         statisticTable.prograssBar.setValue(v);
                     }
