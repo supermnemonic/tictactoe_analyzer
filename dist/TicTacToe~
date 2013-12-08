@@ -1,0 +1,10 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Test
+Comment=Test
+Exec=/home/(myusername)/test/test.sh
+Icon=utilities-terminal
+Terminal=true
+StartupNotify=false
+GenericName=Test

@@ -1,0 +1,10 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Test
+Comment=Test
+Exec=sh TicTacToe.sh
+Icon=utilities-terminal
+Terminal=false
+StartupNotify=false
+GenericName=Test
