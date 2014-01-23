@@ -399,9 +399,9 @@ public class StatisticTable extends javax.swing.JFrame {
     }//GEN-LAST:event_startButtonActionPerformed
 
     private void startButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_startButtonMouseClicked
-        Seed firstPlayer = (firstplayer_X.isSelected())?Seed.CROSS : Seed.NOUGHT;
-        String X_algo = (minimaxRB_X.isSelected())?AIPlayer.MINIMAX:AIPlayer.AB_PRUNING;
-        String O_algo = (minimaxRB_O.isSelected())?AIPlayer.MINIMAX:AIPlayer.AB_PRUNING;
+        Seed firstPlayer = (firstplayer_X.isSelected())?Seed.X : Seed.O;
+        String X_algo = (minimaxRB_X.isSelected())?AI.MINIMAX:AI.AB_PRUNING;
+        String O_algo = (minimaxRB_O.isSelected())?AI.MINIMAX:AI.AB_PRUNING;
         
         game.startGame(firstPlayer, X_algo, O_algo);
     }//GEN-LAST:event_startButtonMouseClicked

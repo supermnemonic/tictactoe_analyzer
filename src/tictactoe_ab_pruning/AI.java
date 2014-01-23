@@ -8,7 +8,7 @@ package tictactoe_ab_pruning;
  *
  * @author mnemonic
  */
-public abstract class AIPlayer {
+public abstract class AI {
     
     public static final String MINIMAX = "minimax";
     public static final String AB_PRUNING = "alpha-beta";
@@ -16,18 +16,18 @@ public abstract class AIPlayer {
     protected int ROWS = Game.ROWS;
     protected int COLS = Game.COLS;
     public Cell[][] cells;
-    protected Seed mySeed;
-    protected Seed oppSeed;
+    protected Seed selfseed;
+    protected Seed enemyseed;
     protected String algo_type = MINIMAX;
     protected int winCount = 0;
     
-    public AIPlayer(Board board) {
+    public AI(Board board) {
         this.cells = board.cells;
     }
     
     public void setSeed(Seed seed) {
-        this.mySeed = seed;
-        oppSeed = (mySeed == Seed.CROSS) ? Seed.NOUGHT : Seed.CROSS;
+        this.selfseed = seed;
+        enemyseed = (selfseed == Seed.X) ? Seed.O : Seed.X;
     }
 
     public void setAlgo_type(String algo_type) {

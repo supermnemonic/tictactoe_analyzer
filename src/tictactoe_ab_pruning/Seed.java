@@ -10,7 +10,7 @@ package tictactoe_ab_pruning;
  */
 public enum Seed {
 
-    MAX("+",1), MIN("-",-1), EMPTY(" ", 0), CROSS("X", MAX.value), NOUGHT("O", MIN.value);
+    MAX("+",1), MIN("-",-1), EMPTY(" ", 0), X("X", MAX.value), O("O", MIN.value);
     
     private final String sign;
     private final int value;

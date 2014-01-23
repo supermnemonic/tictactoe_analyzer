@@ -10,8 +10,8 @@ package tictactoe_ab_pruning;
  */
 class StatisticData {
     
-    public int crossWinCount = 0;
-    public int noughtWinCount = 0;
+    public int X_winCount = 0;
+    public int O_winCount = 0;
     public double runningTime;
 
     public StatisticData() {

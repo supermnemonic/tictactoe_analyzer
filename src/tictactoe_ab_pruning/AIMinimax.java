@@ -11,12 +11,12 @@ import java.util.List;
  *
  * @author mnemonic
  */
-/** AIPlayer using Minimax algorithm */
-public class AIPlayerMinimax extends AIPlayer {
+/** AI using Minimax algorithm */
+public class AIMinimax extends AI {
 
     private int level;
  
-    public AIPlayerMinimax(Board board, int level) {
+    public AIMinimax(Board board, int level) {
         super(board);
         this.level = level;
     }
@@ -30,14 +30,14 @@ public class AIPlayerMinimax extends AIPlayer {
         int[] result;
         switch (algo_type) {
             case MINIMAX:
-                result = minimax(level, mySeed);
+                result = minimax(level, selfseed);
                 break;
             case AB_PRUNING:
-                result = minimax(level, mySeed, Integer.MIN_VALUE, Integer.MAX_VALUE);
+                result = minimax(level, selfseed, Integer.MIN_VALUE, Integer.MAX_VALUE);
                 break;
             default:
                 // default algorithm is using minimax.
-                result = minimax(level, mySeed);
+                result = minimax(level, selfseed);
         }
 
         return new int[]{result[1], result[2]};   // row, col
@@ -45,7 +45,7 @@ public class AIPlayerMinimax extends AIPlayer {
 
     // normal minimax algorithm.
     private int[] minimax(int depth, Seed player) {
-        List<int[]> nextMoves = generateMoves();
+        List<int[]> nextMoves = generateValidMoves();
 
         int bestScore = (player.value() == Seed.MAX.value()) ? Integer.MIN_VALUE : Integer.MAX_VALUE;
         int currentScore;
@@ -53,15 +53,15 @@ public class AIPlayerMinimax extends AIPlayer {
         int bestCol = -1;
 
         if (nextMoves.isEmpty() || depth == 0) {
-            bestScore = evaluate();
+            bestScore = evaluateScoroe();
         } else {
             for (int[] move : nextMoves) {
                 cells[move[0]][move[1]].content = player;
 
-                if (player == mySeed) {
-                    currentScore = minimax(depth - 1, oppSeed)[0];
+                if (player == selfseed) {
+                    currentScore = minimax(depth - 1, enemyseed)[0];
                 } else {
-                    currentScore = minimax(depth - 1, mySeed)[0];
+                    currentScore = minimax(depth - 1, selfseed)[0];
                 }
 
                 if (player.value() == Seed.MAX.value() && currentScore > bestScore) {
@@ -80,10 +80,10 @@ public class AIPlayerMinimax extends AIPlayer {
         return new int[]{bestScore, bestRow, bestCol};
     }
 
-    private List<int[]> generateMoves() {
-        List<int[]> nextMoves = new ArrayList<int[]>(); // allocate List
+    private List<int[]> generateValidMoves() {
+        List<int[]> nextMoves = new ArrayList<>(); // allocate List
 
-        if (Game.hasWon(cells, mySeed) != null || Game.hasWon(cells, oppSeed) != null) {
+        if (Game.hasWon(cells, selfseed) != null || Game.hasWon(cells, enemyseed) != null) {
             return nextMoves;   // return empty list
         }
 
@@ -97,32 +97,37 @@ public class AIPlayerMinimax extends AIPlayer {
         return nextMoves;
     }
 
-    private int evaluate() {
+    private int evaluateScoroe() {
         int score = 0;
 
+        // menghitung skor baris 1 - 3.
         score += evaluateLine(0, 0, 0, 1, 0, 2); 
         score += evaluateLine(1, 0, 1, 1, 1, 2); 
         score += evaluateLine(2, 0, 2, 1, 2, 2); 
+        
+        // menghitung skor kolom 1 - 3.
         score += evaluateLine(0, 0, 1, 0, 2, 0); 
         score += evaluateLine(0, 1, 1, 1, 2, 1); 
         score += evaluateLine(0, 2, 1, 2, 2, 2); 
+        
+        // menghitung skor diagonal kanan dan kiri.
         score += evaluateLine(0, 0, 1, 1, 2, 2); 
         score += evaluateLine(0, 2, 1, 1, 2, 0); 
         return score;
     }
 
-    private int evaluateLine(int row1, int col1, int row2, int col2, int row3, int col3) {
+    private int evaluateLine(int r1, int c1, int r2, int c2, int r3, int c3) {
         int score = 0;
 
         // First cell
-        if (cells[row1][col1].content.value() == Seed.MAX.value()) {
+        if (cells[r1][c1].content.value() == Seed.MAX.value()) {
             score = 1;
-        } else if (cells[row1][col1].content.value() == Seed.MIN.value()) {
+        } else if (cells[r1][c1].content.value() == Seed.MIN.value()) {
             score = -1;
         }
 
         // Second cell
-        if (cells[row2][col2].content.value() == Seed.MAX.value()) {
+        if (cells[r2][c2].content.value() == Seed.MAX.value()) {
             if (score == 1) {
                 score = 10;
             } else if (score == -1) { 
@@ -130,7 +135,7 @@ public class AIPlayerMinimax extends AIPlayer {
             } else { 
                 score = 1;
             }
-        } else if (cells[row2][col2].content.value() == Seed.MIN.value()) {
+        } else if (cells[r2][c2].content.value() == Seed.MIN.value()) {
             if (score == -1) { 
                 score = -10;
             } else if (score == 1) { 
@@ -141,7 +146,7 @@ public class AIPlayerMinimax extends AIPlayer {
         }
 
         // Third cell
-        if (cells[row3][col3].content.value() == Seed.MAX.value()) {
+        if (cells[r3][c3].content.value() == Seed.MAX.value()) {
             if (score > 0) { 
                 score *= 10;
             } else if (score < 0) { 
@@ -149,7 +154,7 @@ public class AIPlayerMinimax extends AIPlayer {
             } else { 
                 score = 1;
             }
-        } else if (cells[row3][col3].content.value() == Seed.MIN.value()) {
+        } else if (cells[r3][c3].content.value() == Seed.MIN.value()) {
             if (score < 0) { 
                 score *= 10;
             } else if (score > 1) { 
@@ -164,22 +169,22 @@ public class AIPlayerMinimax extends AIPlayer {
 
     // modified minimax algorithm, with alpha-beta pruning (cut-off).
     private int[] minimax(int depth, Seed player, int alpha, int beta) {
-        List<int[]> nextMoves = generateMoves();
+        List<int[]> nextMoves = generateValidMoves();
         
         int score;
         int bestRow = -1;
         int bestCol = -1;
 
         if (nextMoves.isEmpty() || depth == 0) {
-            score = evaluate();
+            score = evaluateScoroe();
             return new int[]{score, bestRow, bestCol};
         } else {
             for (int[] move : nextMoves) { 
                 cells[move[0]][move[1]].content = player;
-                if (player == mySeed) { 
-                    score = minimax(depth - 1, oppSeed, alpha, beta)[0];
+                if (player == selfseed) { 
+                    score = minimax(depth - 1, enemyseed, alpha, beta)[0];
                 } else { 
-                    score = minimax(depth - 1, mySeed, alpha, beta)[0];
+                    score = minimax(depth - 1, selfseed, alpha, beta)[0];
                 }
 
                 if (player.value() == Seed.MAX.value() && score > alpha) {

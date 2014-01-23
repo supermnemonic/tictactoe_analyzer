@@ -27,10 +27,10 @@ public class Game {
         0b100010001, 0b001010100
     };
     // prepare player
-    public AIPlayerMinimax firstPlayer;
-    public AIPlayerMinimax currentCom;
-    public AIPlayerMinimax com1;
-    public AIPlayerMinimax com2;
+    public AIMinimax firstPlayer;
+    public AIMinimax currentCom;
+    public AIMinimax com1;
+    public AIMinimax com2;
     // game trial com vs com
     private final int GAME_ITERATION = 5;
     private final int COM1_LEVEL_MAX = 9;
@@ -43,11 +43,11 @@ public class Game {
         board = new Board();
         statisticTable = new StatisticTable(this);
 
-        com1 = new AIPlayerMinimax(board, 1);
-        com2 = new AIPlayerMinimax(board, 1);
+        com1 = new AIMinimax(board, 1);
+        com2 = new AIMinimax(board, 1);
 
-        com1.setSeed(Seed.CROSS);
-        com2.setSeed(Seed.NOUGHT);
+        com1.setSeed(Seed.X);
+        com2.setSeed(Seed.O);
 
         MouseListener tableMouseListener = new MouseAdapter() {
 
@@ -110,14 +110,14 @@ public class Game {
                 com1.setAlgo_type(_X_ALGO);
                 com2.setAlgo_type(_O_ALGO);
 
-                firstPlayer = (com1.mySeed == _FIRSTPLAYER) ? com1 : com2;
+                firstPlayer = (com1.selfseed == _FIRSTPLAYER) ? com1 : com2;
                 currentCom = firstPlayer;
 
-                String s1 = "(" + com1.mySeed.sign() + ") : " + (com1.mySeed.value() == 1 ? "maximizing" : "minimizing") + ".\n";
-                String s2 = "(" + com2.mySeed.sign() + ") : " + (com2.mySeed.value() == 1 ? "maximizing" : "minimizing") + ".\n";
-                String s3 = "First player : (" + firstPlayer.mySeed.sign() + ").\n";
-                String s4 = "(" + com1.mySeed.sign() + ") Algo : " + com1.algo_type + ".\n";
-                String s5 = "(" + com2.mySeed.sign() + ") Algo : " + com2.algo_type + ".\n";
+                String s1 = "(" + com1.selfseed.sign() + ") : " + (com1.selfseed.value() == 1 ? "maximizing" : "minimizing") + ".\n";
+                String s2 = "(" + com2.selfseed.sign() + ") : " + (com2.selfseed.value() == 1 ? "maximizing" : "minimizing") + ".\n";
+                String s3 = "First player : (" + firstPlayer.selfseed.sign() + ").\n";
+                String s4 = "(" + com1.selfseed.sign() + ") Algo : " + com1.algo_type + ".\n";
+                String s5 = "(" + com2.selfseed.sign() + ") Algo : " + com2.algo_type + ".\n";
 
                 statisticTable.playerInfo.setText(s1 + s2 + s3 + s4 + s5);
 
@@ -135,7 +135,7 @@ public class Game {
 
                         // start game n-times, where n is GAME_ITERATION
                         for (int k = 0; k < GAME_ITERATION; k++) {
-                            AIPlayerMinimax winner = null;
+                            AIMinimax winner = null;
                             long startTime, endTime, runTime;
 
                             // reset board.
@@ -164,19 +164,19 @@ public class Game {
 
                                 // check if game is over.
                                 if (isGameOver(move)) {
-                                    if (hasWon(board.cells, com1.mySeed) != null) {
+                                    if (hasWon(board.cells, com1.selfseed) != null) {
                                         winner = com1;                                        
-                                    } else if (hasWon(board.cells, com2.mySeed) != null) {
+                                    } else if (hasWon(board.cells, com2.selfseed) != null) {
                                         winner = com2;
                                     }
                                     break;
                                 }
 
-                                //System.out.println("(" + currentCom.mySeed.sign() + ")" + " NOW TURN");
+                                //System.out.println("(" + currentCom.selfseed.sign() + ")" + " NOW TURN");
                                 putSeed(currentCom, move);
 
                                 //Board.printCells(board.cells);
-                                //System.out.println("(" + currentCom.mySeed.sign() + ")" + " HAS MOVE TO " + move[0] + "," + move[1]);
+                                //System.out.println("(" + currentCom.selfseed.sign() + ")" + " HAS MOVE TO " + move[0] + "," + move[1]);
                                 //System.out.println("");
 
                                 nextPlayer();
@@ -185,15 +185,15 @@ public class Game {
                             if (winner == null) {
                                 gameDraw++;
                                 _totalGameDraw++;
-                            } else if (winner.mySeed == Seed.CROSS) {                                
-                                statistic.records[i_com1][j_com2].crossWinCount++;
+                            } else if (winner.selfseed == Seed.X) {                                
+                                statistic.records[i_com1][j_com2].X_winCount++;
                                 winner.winCount++;
-                            } else if (winner.mySeed == Seed.NOUGHT) {                                
-                                statistic.records[i_com1][j_com2].noughtWinCount++;
+                            } else if (winner.selfseed == Seed.O) {                                
+                                statistic.records[i_com1][j_com2].O_winCount++;
                                 winner.winCount++;
                             }
                             
-                            String w = (winner != null) ? ("(" + winner.mySeed.sign() + ") WIN") : "GAME DRAW";
+                            String w = (winner != null) ? ("(" + winner.selfseed.sign() + ") WIN") : "GAME DRAW";
                             statistic.boardEndState[i_com1][j_com2] = Board.cellsData(board.cells) + "\t" + w;
                             
                         } // end game-n.
@@ -215,8 +215,8 @@ public class Game {
                         statistic.records[i_com1][j_com2].runningTime = averageRunTime;
 
                         // show each player win-count statistic in WIN_TABLE.
-                        //String s = statistic.records[i_com1][j_com2].crossWinCount + "\\" + gameDraw + "\\" + statistic.records[i_com1][j_com2].noughtWinCount;
-                        String s = "x:" + statistic.records[i_com1][j_com2].crossWinCount + " vs " + statistic.records[i_com1][j_com2].noughtWinCount + ":o";
+                        //String s = statistic.records[i_com1][j_com2].X_winCount + "\\" + gameDraw + "\\" + statistic.records[i_com1][j_com2].O_winCount;
+                        String s = "x:" + statistic.records[i_com1][j_com2].X_winCount + " vs " + statistic.records[i_com1][j_com2].O_winCount + ":o";
                         statisticTable.winTable.setValueAt(s, i_com1, j_com2 + 1);
 
                         // update progress bar value.
@@ -237,8 +237,8 @@ public class Game {
 
                 String s = statisticTable.playerInfo.getText() + "\n";
                 s += (COM1_LEVEL_MAX * COM2_LEVEL_MAX * GAME_ITERATION) + " kali percobaan\ntanding:\n";
-                s += "(" + com1.mySeed.sign() + "): " + com1.winCount + " menang.\n";
-                s += "(" + com2.mySeed.sign() + "): " + com2.winCount + " menang.\n";
+                s += "(" + com1.selfseed.sign() + "): " + com1.winCount + " menang.\n";
+                s += "(" + com2.selfseed.sign() + "): " + com2.winCount + " menang.\n";
                 s += "Seri: " + _totalGameDraw + "\n";
                 statisticTable.playerInfo.setText(s);
 
@@ -266,16 +266,16 @@ public class Game {
             for (int j = 0; j < COM2_LEVEL_MAX; j++) {
                 statisticTable.runTimeTable.setValueAt("", i, j + 1);
                 statisticTable.winTable.setValueAt("", i, j + 1);
-                statistic.records[i][j].crossWinCount = 0;
-                statistic.records[i][j].noughtWinCount = 0;
+                statistic.records[i][j].X_winCount = 0;
+                statistic.records[i][j].O_winCount = 0;
                 statistic.records[i][j].runningTime = 0;                
                 statistic.boardEndState[i][j] = "";
             }
         }
     }
 
-    private void putSeed(AIPlayerMinimax player, int[] pos) {
-        board.cells[pos[0]][pos[1]].content = player.mySeed;
+    private void putSeed(AIMinimax player, int[] pos) {
+        board.cells[pos[0]][pos[1]].content = player.selfseed;
     }
 
     private boolean isGameOver(int[] move) {
